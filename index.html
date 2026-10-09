@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Huellas del Valle · Citas</title>
+<style>
+:root{--ink:#14302e;--muted:#5d726f;--paper:#f4f7f6;--card:#fff;--line:#d5e0dd;--teal:#1b6f64;--teal-d:#12504a;
+--green-bg:#dff1ec;--amber:#8a5508;--amber-bg:#fdf1d8;--red:#a63a2f;--red-bg:#fbe5e2;--slate:#44566b;--slate-bg:#e6ebf1}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+header{background:var(--teal-d);color:#fff;padding:18px 20px 0}
+.wrap{max-width:940px;margin:0 auto}
+h1{margin:0;font:700 22px/1.2 Georgia,"Times New Roman",serif}
+header p{margin:2px 0 14px;opacity:.8;font-size:13px}
+nav{display:flex;gap:4px}
+nav button{background:none;border:0;color:#cfe5e0;padding:10px 16px;font:inherit;cursor:pointer;border-bottom:3px solid transparent}
+nav button[aria-selected=true]{color:#fff;border-color:#fff;font-weight:600}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
+main{max-width:940px;margin:0 auto;padding:22px 20px 48px}
+section[hidden]{display:none}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px}
+h2{margin:0 0 14px;font-size:17px}
+label{display:block;font-weight:600;font-size:13px;margin:0 0 4px}
+.f{margin-bottom:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select{width:100%;padding:9px 10px;border:1px solid #b9c9c5;border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:6px;padding:11px 18px;font:600 15px inherit;font-family:inherit;cursor:pointer;width:100%}
+.btn:hover{background:var(--teal-d)}.btn:disabled{opacity:.6;cursor:wait}
+.res{border-left:8px solid var(--line);background:var(--card);border-radius:8px;padding:20px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.res .big{font:700 24px/1.2 Georgia,serif;margin:0 0 6px}
+.res.confirmada{border-left-color:var(--teal);background:var(--green-bg)}
+.res.alerta{border-left-color:#d08a12;background:var(--amber-bg)}
+.res.rechazada{border-left-color:var(--red);background:var(--red-bg)}
+.res.respaldo{border-left-color:var(--slate);background:var(--slate-bg)}
+.res.error{border-left-color:var(--red)}
+.res small{display:block;margin-top:10px;color:var(--muted)}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.bar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+.bar .f{margin:0}.bar button{width:auto}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--muted);font-weight:600;background:#f0f5f4}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:600}
+.t-ok{background:var(--green-bg);color:var(--teal-d)}.t-al{background:var(--amber-bg);color:var(--amber)}
+.t-no{background:var(--red-bg);color:var(--red)}.t-n{background:var(--slate-bg);color:var(--slate)}
+.mini{border:1px solid #b9c9c5;background:#fff;border-radius:6px;padding:4px 9px;font:inherit;font-size:13px;cursor:pointer;margin-right:4px}
+.mini:hover{background:var(--green-bg)}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.sum{margin:0 0 10px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Clínica Veterinaria Huellas del Valle</h1>
+  <p>Agendamiento de citas · Cali</p>
+  <nav role="tablist">
+    <button role="tab" data-v="agendar" aria-selected="true">Agendar cita</button>
+    <button role="tab" data-v="agenda" aria-selected="false">Agenda del día</button>
+    <button role="tab" data-v="franjas" aria-selected="false">Franjas y cupos</button>
+  </nav>
+</div></header>
+
+<main>
+<section id="v-agendar">
+  <div class="grid">
+    <div class="card">
+      <h2>Datos de la cita</h2>
+      <form id="f">
+        <div class="row">
+          <div class="f"><label for="propietario">Propietario</label><input id="propietario" name="propietario" required autocomplete="name"></div>
+          <div class="f"><label for="correo">Correo</label><input id="correo" name="correo" type="email" required autocomplete="email"></div>
+        </div>
+        <div class="row">
+          <div class="f"><label for="mascota">Mascota</label><input id="mascota" name="mascota" required></div>
+          <div class="f"><label for="especie">Especie</label>
+            <select id="especie" name="especie" required><option value="">Elegir…</option><option>Perro</option><option>Gato</option></select></div>
+        </div>
+        <div class="f"><label for="servicio">Servicio</label>
+          <select id="servicio" name="servicio" required><option value="">Elegir…</option><option>Consulta general</option><option>Vacunación</option><option>Baño</option><option>Ecografía</option></select></div>
+        <div class="row">
+          <div class="f"><label for="fecha">Fecha</label><input id="fecha" name="fecha" type="date" required></div>
+          <div class="f"><label for="hora">Hora</label><input id="hora" name="hora" type="time" required></div>
+        </div>
+        <button class="btn" id="go" type="submit">Agendar cita</button>
+      </form>
+    </div>
+    <div id="res" class="res" aria-live="polite">
+      <p class="big">Sin solicitud todavía</p>
+      <p class="hint">Aquí aparece lo que respondió el proceso: confirmada, confirmada con alerta, rechazada o ruta de respaldo.</p>
+    </div>
+  </div>
+</section>
+
+<section id="v-agenda" hidden>
+  <div class="bar">
+    <div class="f"><label for="dia">Fecha</label><input id="dia" type="date"></div>
+    <button class="btn" id="recargar" type="button">Actualizar</button>
+  </div>
+  <p class="sum" id="sum"></p>
+  <div class="tw"><table><thead><tr><th>Hora</th><th>Mascota</th><th>Propietario</th><th>Servicio</th><th>Resultado</th><th>Estado</th><th>Asistencia</th></tr></thead><tbody id="tb"></tbody></table></div>
+  <div id="ag-msg" class="empty" hidden></div>
+</section>
+
+<section id="v-franjas" hidden>
+  <div class="bar"><button class="btn" id="rf" type="button">Actualizar</button></div>
+  <div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Cupo</th><th>Ocupados</th><th>Libres</th><th>Situación</th></tr></thead><tbody id="tf"></tbody></table></div>
+  <div id="fr-msg" class="empty" hidden></div>
+</section>
+</main>
+
+<script>
+// ====== CONFIGURACIÓN: pegar las dos URLs ======
+const CONFIG = {
+  WEBHOOK_URL: "https://hook.eu1.make.com/bpefcpjmssncpvn6bk2y4onrv4cjtxpp",
+  API_URL: "https://script.google.com/macros/s/AKfycbzesUqi80tw0vPSgQpl39TG7Em6dnjfVb2INGt_moYa2_YfLeW5RZdMzmhKuGJsUNFu/exec"
+};
+// ===============================================
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const p2 = n => String(n).padStart(2, "0");
+const hoy = () => { const d = new Date(); return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`; };
+const ahora = () => { const d = new Date(); return `${hoy()} ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`; };
+const sinConfig = u => !u || u.startsWith("PEGAR");
+
+/* Navegación */
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+  ["agendar","agenda","franjas"].forEach(v => $("v-"+v).hidden = v !== b.dataset.v);
+  if (b.dataset.v === "agenda") cargarAgenda();
+  if (b.dataset.v === "franjas") cargarFranjas();
+});
+
+/* Vista 1: agendar (dispara el webhook del escenario 1) */
+function clasificar(d) {
+  const t = String(d.resultado || d.estado || d.status || "").toLowerCase();
+  if (t.includes("alerta")) return "alerta";
+  if (t.includes("rechaz")) return "rechazada";
+  if (t.includes("respaldo") || t.includes("inexist") || t.includes("no_existe")) return "respaldo";
+  if (t.includes("confirm")) return "confirmada";
+  return "desconocida";
+}
+const TITULOS = {confirmada:"Cita confirmada", alerta:"Cita confirmada con alerta", rechazada:"Cita rechazada", respaldo:"Franja no encontrada", desconocida:"Respuesta no reconocida"};
+
+function mostrar(clase, titulo, texto, extra) {
+  const r = $("res");
+  r.className = "res " + clase;
+  r.innerHTML = `<p class="big">${esc(titulo)}</p><p style="margin:0">${esc(texto)}</p>${extra ? `<small>${esc(extra)}</small>` : ""}`;
+}
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (sinConfig(CONFIG.WEBHOOK_URL)) return mostrar("error", "Falta configurar", "Pega la URL del webhook del escenario 1 en CONFIG.WEBHOOK_URL.");
+  const g = id => $(id).value.trim();
+  const datos = { propietario:g("propietario"), correo:g("correo"), mascota:g("mascota"), especie:g("especie"),
+                  servicio:g("servicio"), fecha:g("fecha"), hora:g("hora"), solicitado_en: ahora() };
+  const btn = $("go"); btn.disabled = true; btn.textContent = "Agendando…";
+  mostrar("", "Procesando…", "Esperando la respuesta del proceso.");
+  try {
+    const resp = await fetch(CONFIG.WEBHOOK_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(datos) });
+    const txt = await resp.text();
+    let d; try { d = JSON.parse(txt); } catch { d = null; }
+    if (!d) return mostrar("error", "Respuesta inesperada", txt.slice(0, 200) || "El proceso respondió vacío.", `Código ${resp.status}`);
+    const c = clasificar(d);
+    const libres = d.libres !== undefined && d.libres !== "" ? `Cupos libres después de agendar: ${d.libres}` : "";
+    mostrar(c === "desconocida" ? "error" : c, TITULOS[c], d.mensaje || d.message || "", libres);
+    if (c === "confirmada" || c === "alerta") $("f").reset();
+  } catch (err) {
+    mostrar("error", "No se pudo contactar el proceso", "Revisa que el escenario 1 esté activo y que la URL del webhook sea correcta.", String(err.message || err));
+  } finally { btn.disabled = false; btn.textContent = "Agendar cita"; }
+});
+
+/* Lectura de hojas (Apps Script) */
+async function leer(hoja) {
+  if (sinConfig(CONFIG.API_URL)) throw new Error("Falta pegar CONFIG.API_URL.");
+  const r = await fetch(`${CONFIG.API_URL}?hoja=${hoja}&t=${Date.now()}`);
+  return r.json();
+}
+function badge(t) {
+  const s = String(t || "").toLowerCase();
+  const c = s.includes("no asist") || s.includes("rechaz") ? "t-no" : s.includes("alerta") ? "t-al" : s.includes("asist") || s.includes("confirm") ? "t-ok" : "t-n";
+  return `<span class="tag ${c}">${esc(t || "—")}</span>`;
+}
+
+/* Vista 2: agenda del día */
+$("dia").value = hoy();
+$("dia").onchange = $("recargar").onclick = () => cargarAgenda();
+async function cargarAgenda() {
+  const m = $("ag-msg"), tb = $("tb"); m.hidden = true; tb.innerHTML = "";
+  try {
+    const filas = (await leer("Citas")).filter(c => c.fecha === $("dia").value).sort((a,b) => (a.hora||"").localeCompare(b.hora||""));
+    const n = s => filas.filter(c => c.estado === s).length;
+    $("sum").textContent = `${filas.length} citas · ${n("Asistió")} asistieron · ${n("No asistió")} no asistieron`;
+    if (!filas.length) { m.textContent = "No hay citas para esta fecha."; m.hidden = false; return; }
+    tb.innerHTML = filas.map(c => `<tr><td>${esc(c.hora)}</td><td>${esc(c.mascota)} <span class="hint">(${esc(c.especie)})</span></td><td>${esc(c.propietario)}</td><td>${esc(c.servicio)}</td><td>${badge(c.resultado)}</td><td>${badge(c.estado)}</td>
+      <td><button class="mini" data-id="${esc(c.id)}" data-e="Asistió">Asistió</button><button class="mini" data-id="${esc(c.id)}" data-e="No asistió">No asistió</button></td></tr>`).join("");
+  } catch (err) { $("sum").textContent = ""; m.textContent = "No se pudo cargar la agenda. " + err.message; m.hidden = false; }
+}
+$("tb").onclick = async e => {
+  const b = e.target.closest("button[data-id]"); if (!b) return;
+  b.disabled = true;
+  try {
+    const r = await fetch(CONFIG.API_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({action:"estado", id:b.dataset.id, estado:b.dataset.e}) });
+    const d = await r.json(); if (!d.ok) throw new Error(d.error);
+    cargarAgenda();
+  } catch (err) { b.disabled = false; alert("No se pudo actualizar el estado: " + err.message); }
+};
+
+/* Vista 3 (opcional): franjas y cupos */
+$("rf").onclick = () => cargarFranjas();
+async function cargarFranjas() {
+  const m = $("fr-msg"), tb = $("tf"); m.hidden = true; tb.innerHTML = "";
+  try {
+    const filas = (await leer("Agenda")).sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+    if (!filas.length) { m.textContent = "La agenda no tiene franjas."; m.hidden = false; return; }
+    tb.innerHTML = filas.map(f => { const l = Number(f.cupo) - Number(f.ocupados);
+      const t = l <= 0 ? ["t-no","Llena"] : l === 1 ? ["t-al","Casi llena"] : ["t-ok","Disponible"];
+      return `<tr><td>${esc(f.fecha)}</td><td>${esc(f.hora)}</td><td>${esc(f.cupo)}</td><td>${esc(f.ocupados)}</td><td>${l}</td><td><span class="tag ${t[0]}">${t[1]}</span></td></tr>`; }).join("");
+  } catch (err) { m.textContent = "No se pudo cargar las franjas. " + err.message; m.hidden = false; }
+}
+</script>
+</body>
+</html>
